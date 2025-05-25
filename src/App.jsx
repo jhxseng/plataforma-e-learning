@@ -14,7 +14,7 @@ function App() {
 
         <header>
           <div>
-            <h1>Plataforma E-learning</h1>
+            <h1>Plataforma E-learning - DiversiClass</h1>
             <p>Una experiencia de aprendizaje personalizada</p>
           </div>
           <div>
@@ -42,7 +42,7 @@ function App() {
               role="article"
               aria-label="Curso Introducción a finanzas, progreso 5 por ciento, actualizado hace 2 días"
             >
-              <h3>Introducción a finanzas</h3>
+              <h3>Introducción a desarrollo web</h3>
               <p class="date">Hace 2 días</p>
               <div class="progress-bar-container">
                 <input
@@ -53,11 +53,11 @@ function App() {
                   value="5"
                   aria-valuemin="0"
                   aria-valuemax="100"
-                  aria-valuenow="5"
+                  aria-valuenow="100"
                   aria-label="Progreso del curso"
                   disabled
                 />
-                <span class="progress-percent">5%</span>
+                <span class="progress-percent">100%</span>
               </div>
               <Link to="/course" className="continue-link">
                 Seguir aprendiendo

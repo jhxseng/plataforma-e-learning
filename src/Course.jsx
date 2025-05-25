@@ -25,7 +25,7 @@ const navigate = useNavigate();
     </header>
 
     <section aria-labelledby="course-title">
-      <h1 id="course-title" className="title">Introduction to Web Development</h1>
+      <h1 id="course-title" className="title">Introducción a desarrollo web</h1>
       <p className="subtitle">
         Aprende lo básico de desarrollo web usando HTML, CSS, y JavaScript
       </p>
