@@ -1,17 +1,70 @@
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import { Link } from "react-router-dom";
+import useSpeechToText from "./hooks/useSpeechToText";
 
 
 import "./App.css";
 
-function App() {
+const App = () => {
+
+  const [textInput, setTextInput] = useState("");
+  const {isListening, transcript, finalTranscript, startListening, stopListening } = useSpeechToText({continuous:true});
+  const fileInputRef = useRef(null);
+  const sections = useRef({});
+  const lastCommandRef = useRef("");
+
+  const startStopListening = () => {
+    isListening ? stopListening() : startListening();
+  }
+
+  const speak = (text) => {
+    const utterance = new SpeechSynthesisUtterance(text); 
+    utterance.lang = "es-ES"; 
+    window.speechSynthesis.speak(utterance); 
+  };
+
+  const handleCommand = (command) => {
+    command = command.toLowerCase();
+    console.log("Comando procesado:", command);
+
+    if (command.includes("subir archivo")) {
+       fileInputRef.current?.click();
+    } else if (command.includes("leer cursos")) {
+      speak(sections.current.section1.innerText + sections.current.section2.innerText + sections.current.section3.innerText); 
+    } else if (command.includes("curso 1")) {
+      speak("Yendo a curso uno:" + sections.current.section1.innerText);
+      window.location.href = "/course";
+    } else if (command.includes("inicio")) {
+       window.location.href = "/home";
+    }
+  };
+
+   useEffect(() => {
+    if (finalTranscript && finalTranscript !== lastCommandRef.current) {
+      handleCommand(finalTranscript);
+      lastCommandRef.current = finalTranscript; 
+    }
+  }, [finalTranscript]);
+
+  
 
   return (
+
     <>
-
-
+        <button 
+        onClick={() => {startStopListening()}}
+          style={
+            {borderStyle: 'solid', 
+             borderColor: 'black', 
+             marginBottom: '10px', 
+             fontSize: '14px', 
+             cursor: 'pointer', 
+             backgroundColor: isListening ? 'red' : "#61dafbaa", 
+             color:'black', 
+             transition: 'background-color 0.3s ease'
+             }}>{isListening ? 'Detener' : 'Presiona para hablar'}</button>
         <header>
           <div>
             <h1>Plataforma E-learning - DiversiClass</h1>
@@ -32,6 +85,7 @@ function App() {
           <p>
             Soporta archivos <span>PDF, DOCX, PPTX</span>
           </p>
+          <input type ="file" id="file-upload" aria-label="Subir archivo" ref={fileInputRef}/>
         </section>
 
         <section class="progress-section" aria-label="Tu progreso">
@@ -42,7 +96,7 @@ function App() {
               role="article"
               aria-label="Curso Introducción a finanzas, progreso 5 por ciento, actualizado hace 2 días"
             >
-              <h3>Introducción a desarrollo web</h3>
+              <h3 ref={(el) => (sections.current.section1 = el)}>Introducción a desarrollo web</h3>
               <p class="date">Hace 2 días</p>
               <div class="progress-bar-container">
                 <input
@@ -69,7 +123,7 @@ function App() {
               role="article"
               aria-label="Curso Introducción a finanzas, progreso 5 por ciento, actualizado hace 2 días"
             >
-              <h3>Introducción a finanzas</h3>
+              <h3 ref={(el) => (sections.current.section2 = el)}>Introducción a finanzas</h3>
               <p class="date">Hace 2 días</p>
               <div class="progress-bar-container">
                 <input
@@ -96,7 +150,7 @@ function App() {
               role="article"
               aria-label="Curso Introducción a finanzas, progreso 5 por ciento, actualizado hace 2 días"
             >
-              <h3>Introducción a finanzas</h3>
+              <h3 ref={(el) => (sections.current.section3 = el)}>Introducción a diseño UX</h3>
               <p class="date">Hace 2 días</p>
               <div class="progress-bar-container">
                 <input

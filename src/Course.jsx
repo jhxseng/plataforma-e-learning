@@ -1,15 +1,54 @@
 import React from 'react';
+import { useState, useRef } from "react";
 import "./App.css";
 import { useNavigate } from 'react-router-dom';
+import useSpeechToText from "./hooks/useSpeechToText";
 
 
 const Course = () => {
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate('/'); 
+    navigate('/home'); 
   };
+
+  const [textInput, setTextInput] = useState("");
+  const {isListening, finalTranscript, startListening, stopListening } = useSpeechToText({continuous:true});
+  const fileInputRef = useRef(null);
+  const sections = useRef({});
+
+  const startStopListening = () => {
+    isListening ? stopListening() : startListening();
+  }
+
+  const speak = (text) => {
+    const utterance = new SpeechSynthesisUtterance(text); 
+    utterance.lang = "es-ES"; 
+    window.speechSynthesis.speak(utterance); 
+  };
+
+  const handleCommand = (command) => {
+    command = command.toLowerCase();
+    console.log("Comando procesado:", command);
+
+    if (command.includes("subir")) {
+       fileInputRef.current?.click();
+    } else if (command.includes("leer")) {
+      speak(sections.current.section1.innerText + sections.current.section2.innerText + sections.current.section3.innerText); 
+    } else if (command.includes("curso 1")) {
+      speak("Yendo a curso uno:" + sections.current.section1.innerText);
+      window.location.href = "/course";
+    } else if (command.includes("inicio")) {
+       speak("Volviendo a la pantalla principal");
+       window.location.href = "/home";
+    }
+  };
+
+  if (isListening && finalTranscript.length > 0) {
+    handleCommand(finalTranscript);
+  }
+
 
   return (
     <div className="container" role="main">
@@ -18,7 +57,7 @@ const navigate = useNavigate();
         <i className="fas fa-arrow-left" aria-hidden="true"></i>
         Regresar al Dashboard
       </button>
-      <button className="btn accessibility" aria-label="Accessibility">
+      <button className="btn accessibility" aria-label="Accessibility" onClick={() => {startStopListening()}}>
         <i className="fas fa-volume-up" aria-hidden="true"></i>
         Accesibilidad
       </button>
